@@ -27,6 +27,10 @@
 #include <linux/regulator/machine.h>
 #include <linux/usb/phy.h>
 #include <linux/reset.h>
+#undef dev_dbg
+#define dev_dbg dev_err
+#undef pr_debug
+#define pr_debug pr_info
 
 #define QUSB2PHY_PLL_PWR_CTL		0x18
 #define REF_BUF_EN			BIT(0)

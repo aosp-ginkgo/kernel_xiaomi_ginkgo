@@ -18,6 +18,9 @@
 #include "function/u_ncm.h"
 #endif
 
+#undef pr_debug
+#define pr_debug pr_info
+
 #ifdef CONFIG_USB_CONFIGFS_F_ACC
 extern int acc_ctrlrequest(struct usb_composite_dev *cdev,
 				const struct usb_ctrlrequest *ctrl);
