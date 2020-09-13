@@ -297,7 +297,8 @@ static struct uverbs_method_spec *build_method_with_attrs(const struct uverbs_me
 	if (max_attr_buckets >= 0)
 		num_attr_buckets = max_attr_buckets + 1;
 
-	method = kzalloc(struct_size(method, attr_buckets, num_attr_buckets),
+	method = kzalloc(sizeof(*method) +
+			 num_attr_buckets * sizeof(*method->attr_buckets),
 			 GFP_KERNEL);
 	if (!method)
 		return ERR_PTR(-ENOMEM);
@@ -445,8 +446,9 @@ static struct uverbs_object_spec *build_object_with_methods(const struct uverbs_
 	if (max_method_buckets >= 0)
 		num_method_buckets = max_method_buckets + 1;
 
-	object = kzalloc(struct_size(object, method_buckets, num_method_buckets),
-			 GFP_KERNEL);
+	object = kzalloc(sizeof(*object) +
+			 num_method_buckets *
+			 sizeof(*object->method_buckets), GFP_KERNEL);
 	if (!object)
 		return ERR_PTR(-ENOMEM);
 
@@ -467,7 +469,8 @@ static struct uverbs_object_spec *build_object_with_methods(const struct uverbs_
 		if (methods_max_bucket < 0)
 			continue;
 
-		hash = kzalloc(struct_size(hash, methods, (methods_max_bucket + 1)),
+		hash = kzalloc(sizeof(*hash) +
+			       sizeof(*hash->methods) * (methods_max_bucket + 1),
 			       GFP_KERNEL);
 		if (!hash) {
 			res = -ENOMEM;
@@ -576,7 +579,8 @@ struct uverbs_root_spec *uverbs_alloc_spec_tree(unsigned int num_trees,
 	if (max_object_buckets >= 0)
 		num_objects_buckets = max_object_buckets + 1;
 
-	root_spec = kzalloc(struct_size(root_spec, object_buckets, num_objects_buckets),
+	root_spec = kzalloc(sizeof(*root_spec) +
+			    num_objects_buckets * sizeof(*root_spec->object_buckets),
 			    GFP_KERNEL);
 	if (!root_spec)
 		return ERR_PTR(-ENOMEM);
@@ -599,7 +603,8 @@ struct uverbs_root_spec *uverbs_alloc_spec_tree(unsigned int num_trees,
 		if (objects_max_bucket < 0)
 			continue;
 
-		hash = kzalloc(struct_size(hash, objects, (objects_max_bucket + 1)),
+		hash = kzalloc(sizeof(*hash) +
+			       sizeof(*hash->objects) * (objects_max_bucket + 1),
 			       GFP_KERNEL);
 		if (!hash) {
 			res = -ENOMEM;

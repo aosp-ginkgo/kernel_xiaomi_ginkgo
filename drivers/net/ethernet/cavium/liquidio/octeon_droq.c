@@ -281,11 +281,13 @@ int octeon_init_droq(struct octeon_device *oct,
 		droq->max_count);
 
 	droq->recv_buf_list = (struct octeon_recv_buffer *)
-			      vzalloc_node(array_size(droq->max_count, OCT_DROQ_RECVBUF_SIZE),
+			      vzalloc_node(droq->max_count *
+						OCT_DROQ_RECVBUF_SIZE,
 						numa_node);
 	if (!droq->recv_buf_list)
 		droq->recv_buf_list = (struct octeon_recv_buffer *)
-				      vzalloc(array_size(droq->max_count, OCT_DROQ_RECVBUF_SIZE));
+				      vzalloc(droq->max_count *
+						OCT_DROQ_RECVBUF_SIZE);
 	if (!droq->recv_buf_list) {
 		dev_err(&oct->pci_dev->dev, "Output queue recv buf list alloc failed\n");
 		goto init_droq_fail;

@@ -5141,7 +5141,7 @@ void lockdep_init_task(struct task_struct *task)
 		task->hist_id_save[i] = 0;
 	}
 
-	task->xhlocks = kcalloc(MAX_XHLOCKS_NR, sizeof(struct hist_lock),
+	task->xhlocks = kzalloc(sizeof(struct hist_lock) * MAX_XHLOCKS_NR,
 				GFP_KERNEL);
 }
 

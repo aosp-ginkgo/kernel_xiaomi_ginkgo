@@ -62,7 +62,7 @@ static int parser_trx_parse(struct mtd_info *mtd,
 	uint8_t curr_part = 0, i = 0;
 	int err;
 
-	parts = kcalloc(TRX_PARSER_MAX_PARTS, sizeof(struct mtd_partition),
+	parts = kzalloc(sizeof(struct mtd_partition) * TRX_PARSER_MAX_PARTS,
 			GFP_KERNEL);
 	if (!parts)
 		return -ENOMEM;

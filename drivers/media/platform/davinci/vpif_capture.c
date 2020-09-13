@@ -1521,10 +1521,8 @@ vpif_capture_get_pdata(struct platform_device *pdev)
 	if (!pdata)
 		return NULL;
 	pdata->subdev_info =
-		devm_kcalloc(&pdev->dev,
-			     VPIF_CAPTURE_NUM_CHANNELS,
-			     sizeof(*pdata->subdev_info),
-			     GFP_KERNEL);
+		devm_kzalloc(&pdev->dev, sizeof(*pdata->subdev_info) *
+			     VPIF_CAPTURE_NUM_CHANNELS, GFP_KERNEL);
 
 	if (!pdata->subdev_info)
 		return NULL;
@@ -1541,9 +1539,9 @@ vpif_capture_get_pdata(struct platform_device *pdev)
 
 		sdinfo = &pdata->subdev_info[i];
 		chan = &pdata->chan_config[i];
-		chan->inputs = devm_kcalloc(&pdev->dev,
+		chan->inputs = devm_kzalloc(&pdev->dev,
+					    sizeof(*chan->inputs) *
 					    VPIF_CAPTURE_NUM_CHANNELS,
-					    sizeof(*chan->inputs),
 					    GFP_KERNEL);
 		if (!chan->inputs)
 			return NULL;

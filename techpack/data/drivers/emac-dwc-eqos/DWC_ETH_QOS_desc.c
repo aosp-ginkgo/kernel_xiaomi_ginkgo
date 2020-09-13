@@ -127,9 +127,8 @@ static int DWC_ETH_QOS_alloc_rx_queue_struct(struct DWC_ETH_QOS_prv_data *pdata)
 	DBGPR("rx_queue_cnt = %d\n", pdata->rx_queue_cnt);
 
 	pdata->rx_queue =
-		kcalloc(pdata->rx_queue_cnt,
-			sizeof(struct DWC_ETH_QOS_rx_queue),
-			GFP_KERNEL);
+		kzalloc(sizeof(struct DWC_ETH_QOS_rx_queue) * pdata->rx_queue_cnt,
+		GFP_KERNEL);
 	if (pdata->rx_queue == NULL) {
 		IPCERR_RL("ERROR: Unable to allocate Rx queue structure\n");
 		ret = -ENOMEM;
@@ -145,8 +144,7 @@ static int DWC_ETH_QOS_alloc_rx_queue_struct(struct DWC_ETH_QOS_prv_data *pdata)
 
 		/* Alocate rx_desc_ptrs */
 		rx_desc_data->rx_desc_ptrs =
-			kcalloc(pdata->rx_queue[chInx].desc_cnt,
-					sizeof(struct s_RX_NORMAL_DESC *),
+			kzalloc(sizeof(struct s_RX_NORMAL_DESC *) * pdata->rx_queue[chInx].desc_cnt,
 					GFP_KERNEL);
 		if (rx_desc_data->rx_desc_ptrs == NULL) {
 			IPCERR_RL("ERROR: Unable to allocate Rx Desc ptrs\n");
@@ -161,8 +159,7 @@ static int DWC_ETH_QOS_alloc_rx_queue_struct(struct DWC_ETH_QOS_prv_data *pdata)
 
 		/* Alocate rx_desc_dma_addrs */
 		rx_desc_data->rx_desc_dma_addrs =
-			kcalloc(pdata->rx_queue[chInx].desc_cnt,
-					sizeof(dma_addr_t),
+			kzalloc(sizeof(dma_addr_t) *pdata->rx_queue[chInx].desc_cnt,
 					GFP_KERNEL);
 		if (rx_desc_data->rx_desc_dma_addrs == NULL) {
 			IPCERR_RL("ERROR: Unable to allocate Rx Desc dma addr\n");
@@ -177,8 +174,7 @@ static int DWC_ETH_QOS_alloc_rx_queue_struct(struct DWC_ETH_QOS_prv_data *pdata)
 
 		/* Alocate rx_buf_ptrs */
 		rx_desc_data->rx_buf_ptrs =
-			kcalloc(pdata->rx_queue[chInx].desc_cnt,
-					sizeof(struct DWC_ETH_QOS_rx_buffer *),
+			kzalloc(sizeof(struct DWC_ETH_QOS_rx_buffer *) * pdata->rx_queue[chInx].desc_cnt,
 					GFP_KERNEL);
 		if (rx_desc_data->rx_buf_ptrs == NULL) {
 			IPCERR_RL("ERROR: Unable to allocate Rx Desc dma addr\n");
@@ -194,9 +190,7 @@ static int DWC_ETH_QOS_alloc_rx_queue_struct(struct DWC_ETH_QOS_prv_data *pdata)
 		if (pdata->ipa_enabled) {
 			/* Allocate ipa_rx_buff_pool_va_addrs_base */
 			rx_desc_data->ipa_rx_buff_pool_va_addrs_base =
-				kcalloc(pdata->rx_queue[chInx].desc_cnt,
-					sizeof(void *),
-					GFP_KERNEL);
+				kzalloc(sizeof(void *) * pdata->rx_queue[chInx].desc_cnt, GFP_KERNEL);
 			if (rx_desc_data->ipa_rx_buff_pool_va_addrs_base == NULL) {
 				IPCERR_RL("ERROR: Unable to allocate Rx ipa buff addrs\n");
 				ret = -ENOMEM;
@@ -277,9 +271,8 @@ static int DWC_ETH_QOS_alloc_tx_queue_struct(struct DWC_ETH_QOS_prv_data *pdata)
 	DBGPR("tx_queue_cnt = %d", pdata->tx_queue_cnt);
 
 	pdata->tx_queue =
-		kcalloc(pdata->tx_queue_cnt,
-			sizeof(struct DWC_ETH_QOS_tx_queue),
-			GFP_KERNEL);
+		kzalloc(sizeof(struct DWC_ETH_QOS_tx_queue) * pdata->tx_queue_cnt,
+		GFP_KERNEL);
 	if (pdata->tx_queue == NULL) {
 		IPCERR_RL("ERROR: Unable to allocate Tx queue structure\n");
 		ret = -ENOMEM;
@@ -295,8 +288,7 @@ static int DWC_ETH_QOS_alloc_tx_queue_struct(struct DWC_ETH_QOS_prv_data *pdata)
 
 		/* Allocate tx_desc_ptrs */
 		tx_desc_data->tx_desc_ptrs =
-			kcalloc(pdata->tx_queue[chInx].desc_cnt,
-					sizeof(struct s_TX_NORMAL_DESC *),
+			kzalloc(sizeof(struct s_TX_NORMAL_DESC *) * pdata->tx_queue[chInx].desc_cnt,
 					GFP_KERNEL);
 		if (tx_desc_data->tx_desc_ptrs == NULL) {
 			IPCERR_RL("ERROR: Unable to allocate Tx Desc ptrs\n");
@@ -310,8 +302,7 @@ static int DWC_ETH_QOS_alloc_tx_queue_struct(struct DWC_ETH_QOS_prv_data *pdata)
 
 		/* Allocate tx_desc_dma_addrs */
 		tx_desc_data->tx_desc_dma_addrs =
-			kcalloc(pdata->tx_queue[chInx].desc_cnt,
-					sizeof(dma_addr_t),
+			kzalloc(sizeof(dma_addr_t) * pdata->tx_queue[chInx].desc_cnt,
 					GFP_KERNEL);
 		if (tx_desc_data->tx_desc_dma_addrs == NULL) {
 			IPCERR_RL("ERROR: Unable to allocate Tx Desc dma addrs\n");
@@ -325,8 +316,7 @@ static int DWC_ETH_QOS_alloc_tx_queue_struct(struct DWC_ETH_QOS_prv_data *pdata)
 
 		/* Allocate tx_buf_ptrs */
 		tx_desc_data->tx_buf_ptrs =
-			kcalloc(pdata->tx_queue[chInx].desc_cnt,
-					sizeof(struct DWC_ETH_QOS_tx_buffer *),
+			kzalloc(sizeof(struct DWC_ETH_QOS_tx_buffer *) * pdata->tx_queue[chInx].desc_cnt,
 					GFP_KERNEL);
 		if (tx_desc_data->tx_buf_ptrs == NULL) {
 			IPCERR_RL("ERROR: Unable to allocate Tx buff ptrs\n");
@@ -341,9 +331,7 @@ static int DWC_ETH_QOS_alloc_tx_queue_struct(struct DWC_ETH_QOS_prv_data *pdata)
 		if (pdata->ipa_enabled) {
 			/* Allocate ipa_tx_buff_pool_va_addrs_base */
 			tx_desc_data->ipa_tx_buff_pool_va_addrs_base =
-				kcalloc(pdata->tx_queue[chInx].desc_cnt,
-					sizeof(void *),
-					GFP_KERNEL);
+				kzalloc(sizeof(void *) * pdata->tx_queue[chInx].desc_cnt,GFP_KERNEL);
 			if (tx_desc_data->ipa_tx_buff_pool_va_addrs_base == NULL) {
 				IPCERR_RL("ERROR: Unable to allocate Tx ipa buff addrs\n");
 				ret = -ENOMEM;

@@ -732,9 +732,8 @@ int msm_csiphy_subdev_init(struct csiphy_device *csiphy,
 	while (res->clock[csiphy->nclocks])
 		csiphy->nclocks++;
 
-	csiphy->clock = devm_kcalloc(dev,
-				     csiphy->nclocks, sizeof(*csiphy->clock),
-				     GFP_KERNEL);
+	csiphy->clock = devm_kzalloc(dev, csiphy->nclocks *
+				     sizeof(*csiphy->clock), GFP_KERNEL);
 	if (!csiphy->clock)
 		return -ENOMEM;
 
@@ -756,10 +755,8 @@ int msm_csiphy_subdev_init(struct csiphy_device *csiphy,
 			continue;
 		}
 
-		clock->freq = devm_kcalloc(dev,
-					   clock->nfreqs,
-					   sizeof(*clock->freq),
-					   GFP_KERNEL);
+		clock->freq = devm_kzalloc(dev, clock->nfreqs *
+					   sizeof(*clock->freq), GFP_KERNEL);
 		if (!clock->freq)
 			return -ENOMEM;
 

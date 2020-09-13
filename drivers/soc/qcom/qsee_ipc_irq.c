@@ -267,7 +267,7 @@ static int qsee_irq_probe(struct platform_device *pdev)
 		return -ENODEV;
 
 	irq_count = platform_irq_count(pdev);
-	qirq->banks = devm_kcalloc(dev, irq_count, sizeof(*qirq->banks),
+	qirq->banks = devm_kzalloc(dev, sizeof(*qirq->banks) * irq_count,
 				   GFP_KERNEL);
 	if (!qirq->banks)
 		return -ENOMEM;

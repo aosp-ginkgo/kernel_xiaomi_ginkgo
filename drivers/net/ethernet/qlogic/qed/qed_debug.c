@@ -6468,8 +6468,7 @@ static enum dbg_status qed_mcp_trace_alloc_meta(struct qed_hwfn *p_hwfn,
 
 	/* Read no. of modules and allocate memory for their pointers */
 	meta->modules_num = qed_read_byte_from_buf(meta_buf_bytes, &offset);
-	meta->modules = kcalloc(meta->modules_num, sizeof(char *),
-				GFP_KERNEL);
+	meta->modules = kzalloc(meta->modules_num * sizeof(char *), GFP_KERNEL);
 	if (!meta->modules)
 		return DBG_STATUS_VIRT_MEM_ALLOC_FAILED;
 
@@ -6497,7 +6496,7 @@ static enum dbg_status qed_mcp_trace_alloc_meta(struct qed_hwfn *p_hwfn,
 
 	/* Read number of formats and allocate memory for all formats */
 	meta->formats_num = qed_read_dword_from_buf(meta_buf_bytes, &offset);
-	meta->formats = kcalloc(meta->formats_num,
+	meta->formats = kzalloc(meta->formats_num *
 				sizeof(struct mcp_trace_format),
 				GFP_KERNEL);
 	if (!meta->formats)

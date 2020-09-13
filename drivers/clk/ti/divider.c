@@ -364,7 +364,7 @@ int ti_clk_parse_divider_data(int *div_table, int num_dividers, int max_div,
 
 	num_dividers = i;
 
-	tmp = kcalloc(valid_div + 1, sizeof(*tmp), GFP_KERNEL);
+	tmp = kzalloc(sizeof(*tmp) * (valid_div + 1), GFP_KERNEL);
 	if (!tmp)
 		return -ENOMEM;
 
@@ -493,7 +493,7 @@ __init ti_clk_get_div_table(struct device_node *node)
 		return ERR_PTR(-EINVAL);
 	}
 
-	table = kcalloc(valid_div + 1, sizeof(*table), GFP_KERNEL);
+	table = kzalloc(sizeof(*table) * (valid_div + 1), GFP_KERNEL);
 
 	if (!table)
 		return ERR_PTR(-ENOMEM);

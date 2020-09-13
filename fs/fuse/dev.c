@@ -66,11 +66,9 @@ static struct fuse_req *__fuse_request_alloc(unsigned npages, gfp_t flags)
 			pages = req->inline_pages;
 			page_descs = req->inline_page_descs;
 		} else {
-			pages = kmalloc_array(npages, sizeof(struct page *),
-					      flags);
-			page_descs = kmalloc_array(npages,
-						   sizeof(struct fuse_page_desc),
-						   flags);
+			pages = kmalloc(sizeof(struct page *) * npages, flags);
+			page_descs = kmalloc(sizeof(struct fuse_page_desc) *
+					     npages, flags);
 		}
 
 		if (!pages || !page_descs) {

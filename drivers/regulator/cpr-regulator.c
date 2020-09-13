@@ -1731,8 +1731,8 @@ static int cpr_config(struct cpr_regulator *cpr_vreg, struct device *dev)
 		cpr_vreg->flags |= FLAGS_IGNORE_1ST_IRQ_STATUS;
 
 	size = cpr_vreg->num_corners + 1;
-	cpr_vreg->save_ctl = devm_kcalloc(dev, size, sizeof(int), GFP_KERNEL);
-	cpr_vreg->save_irq = devm_kcalloc(dev, size, sizeof(int), GFP_KERNEL);
+	cpr_vreg->save_ctl = devm_kzalloc(dev, sizeof(int) * size, GFP_KERNEL);
+	cpr_vreg->save_irq = devm_kzalloc(dev, sizeof(int) * size, GFP_KERNEL);
 	if (!cpr_vreg->save_ctl || !cpr_vreg->save_irq)
 		return -ENOMEM;
 
@@ -1883,7 +1883,7 @@ static int cpr_pvs_per_corner_init(struct device_node *of_node,
 			"fuse position for init voltages is invalid\n");
 		return -EINVAL;
 	}
-	fuse_sel = kcalloc(size, sizeof(u32), GFP_KERNEL);
+	fuse_sel = kzalloc(sizeof(u32) * size, GFP_KERNEL);
 	if (!fuse_sel)
 		return -ENOMEM;
 	rc = of_property_read_u32_array(of_node, init_volt_str,
@@ -1903,8 +1903,8 @@ static int cpr_pvs_per_corner_init(struct device_node *of_node,
 		return rc;
 	}
 
-	ref_uv = kcalloc(cpr_vreg->num_fuse_corners + 1, sizeof(*ref_uv),
-			 GFP_KERNEL);
+	ref_uv = kzalloc((cpr_vreg->num_fuse_corners + 1) * sizeof(*ref_uv),
+			GFP_KERNEL);
 	if (!ref_uv) {
 		kfree(fuse_sel);
 		return -ENOMEM;
@@ -2016,8 +2016,7 @@ static int cpr_pvs_single_bin_init(struct device_node *of_node,
 				((1 << pvs_fuse[2]) - 1);
 	pvs_bins = 1 << pvs_fuse[2];
 	stripe_size = cpr_vreg->num_fuse_corners;
-	tmp = kzalloc(array3_size(pvs_bins, stripe_size, sizeof(u32)),
-		      GFP_KERNEL);
+	tmp = kzalloc(sizeof(u32) * pvs_bins * stripe_size, GFP_KERNEL);
 	if (!tmp)
 		return -ENOMEM;
 
@@ -2098,9 +2097,9 @@ static int cpr_parse_vdd_mx_parameters(struct platform_device *pdev,
 		return -EINVAL;
 	}
 
-	cpr_vreg->vdd_mx_corner_map = devm_kcalloc(&pdev->dev,
-		corner_map_len + 1, sizeof(*cpr_vreg->vdd_mx_corner_map),
-		GFP_KERNEL);
+	cpr_vreg->vdd_mx_corner_map = devm_kzalloc(&pdev->dev,
+		(corner_map_len + 1) * sizeof(*cpr_vreg->vdd_mx_corner_map),
+			GFP_KERNEL);
 	if (!cpr_vreg->vdd_mx_corner_map)
 		return -ENOMEM;
 
@@ -2349,8 +2348,8 @@ static int cpr_get_open_loop_voltage(struct cpr_regulator *cpr_vreg,
 	u64 volt_high, volt_low, freq_high, freq_low, freq, temp, temp_limit;
 	u32 *max_factor = NULL;
 
-	cpr_vreg->open_loop_volt = devm_kcalloc(dev,
-			cpr_vreg->num_corners + 1, sizeof(int), GFP_KERNEL);
+	cpr_vreg->open_loop_volt = devm_kzalloc(dev,
+			sizeof(int) * (cpr_vreg->num_corners + 1), GFP_KERNEL);
 	if (!cpr_vreg->open_loop_volt)
 		return -ENOMEM;
 
@@ -2373,7 +2372,7 @@ static int cpr_get_open_loop_voltage(struct cpr_regulator *cpr_vreg,
 	}
 
 	max_factor
-	       = kcalloc(cpr_vreg->num_fuse_corners + 1, sizeof(*max_factor),
+	       = kzalloc(sizeof(*max_factor) * (cpr_vreg->num_fuse_corners + 1),
 			 GFP_KERNEL);
 	if (!max_factor)
 		return -ENOMEM;
@@ -2585,7 +2584,7 @@ static int cpr_get_fuse_quot_offset(struct cpr_regulator *cpr_vreg,
 		return -EINVAL;
 	}
 
-	fuse_sel = kcalloc(size, sizeof(u32), GFP_KERNEL);
+	fuse_sel = kzalloc(sizeof(u32) * size, GFP_KERNEL);
 	if (!fuse_sel)
 		return -ENOMEM;
 
@@ -2599,8 +2598,8 @@ static int cpr_get_fuse_quot_offset(struct cpr_regulator *cpr_vreg,
 		return rc;
 	}
 
-	cpr_vreg->fuse_quot_offset = devm_kcalloc(dev,
-			cpr_vreg->num_fuse_corners + 1, sizeof(u32),
+	cpr_vreg->fuse_quot_offset = devm_kzalloc(dev,
+			sizeof(u32) * (cpr_vreg->num_fuse_corners + 1),
 			GFP_KERNEL);
 	if (!cpr_vreg->fuse_quot_offset) {
 		kfree(fuse_sel);
@@ -2617,9 +2616,9 @@ static int cpr_get_fuse_quot_offset(struct cpr_regulator *cpr_vreg,
 			return -EINVAL;
 		}
 
-		offset_multiplier = kcalloc(cpr_vreg->num_fuse_corners + 1,
-					    sizeof(*offset_multiplier),
-					    GFP_KERNEL);
+		offset_multiplier = kzalloc(sizeof(*offset_multiplier)
+					* (cpr_vreg->num_fuse_corners + 1),
+					GFP_KERNEL);
 		if (!offset_multiplier) {
 			kfree(fuse_sel);
 			return -ENOMEM;
@@ -2804,14 +2803,14 @@ static int cpr_get_corner_quot_adjustment(struct cpr_regulator *cpr_vreg,
 		corners_mapped = false;
 	}
 
-	cpr_vreg->corner_map = devm_kcalloc(dev, size + 1, sizeof(int),
-					    GFP_KERNEL);
+	cpr_vreg->corner_map = devm_kzalloc(dev, sizeof(int) * (size + 1),
+					GFP_KERNEL);
 	if (!cpr_vreg->corner_map)
 		return -ENOMEM;
 	cpr_vreg->num_corners = size;
 
-	cpr_vreg->quot_adjust = devm_kcalloc(dev,
-			cpr_vreg->num_corners + 1, sizeof(u32),
+	cpr_vreg->quot_adjust = devm_kzalloc(dev,
+			sizeof(u32) * (cpr_vreg->num_corners + 1),
 			GFP_KERNEL);
 	if (!cpr_vreg->quot_adjust)
 		return -ENOMEM;
@@ -3189,8 +3188,8 @@ static int cpr_read_ro_select(struct platform_device *pdev,
 	int i;
 
 	bp_ro_sel
-		= kcalloc(cpr_vreg->num_fuse_corners + 1, sizeof(*bp_ro_sel),
-			  GFP_KERNEL);
+		= kzalloc((cpr_vreg->num_fuse_corners + 1) * sizeof(*bp_ro_sel),
+			GFP_KERNEL);
 	if (!bp_ro_sel)
 		return -ENOMEM;
 
@@ -4098,8 +4097,7 @@ static int cpr_init_cpr_voltages(struct cpr_regulator *cpr_vreg,
 	int i;
 	int size = cpr_vreg->num_corners + 1;
 
-	cpr_vreg->last_volt = devm_kcalloc(dev, size, sizeof(int),
-					   GFP_KERNEL);
+	cpr_vreg->last_volt = devm_kzalloc(dev, sizeof(int) * size, GFP_KERNEL);
 	if (!cpr_vreg->last_volt)
 		return -EINVAL;
 
@@ -4208,12 +4206,12 @@ static int cpr_init_ceiling_floor_override_voltages(
 	int rc, i;
 	int size = cpr_vreg->num_corners + 1;
 
-	cpr_vreg->ceiling_volt = devm_kcalloc(dev, size, sizeof(int),
+	cpr_vreg->ceiling_volt = devm_kzalloc(dev, sizeof(int) * size,
 						GFP_KERNEL);
-	cpr_vreg->floor_volt = devm_kcalloc(dev, size, sizeof(int),
+	cpr_vreg->floor_volt = devm_kzalloc(dev, sizeof(int) * size,
 						GFP_KERNEL);
-	cpr_vreg->cpr_max_ceiling = devm_kcalloc(dev, size, sizeof(int),
-						 GFP_KERNEL);
+	cpr_vreg->cpr_max_ceiling = devm_kzalloc(dev, sizeof(int) * size,
+						GFP_KERNEL);
 	if (!cpr_vreg->ceiling_volt || !cpr_vreg->floor_volt ||
 		!cpr_vreg->cpr_max_ceiling)
 		return -ENOMEM;
@@ -4567,10 +4565,9 @@ static int cpr_rpm_apc_init(struct platform_device *pdev,
 		return -EINVAL;
 	}
 
-	cpr_vreg->rpm_apc_corner_map = devm_kcalloc(&pdev->dev,
-		cpr_vreg->num_corners + 1,
-		sizeof(*cpr_vreg->rpm_apc_corner_map),
-		GFP_KERNEL);
+	cpr_vreg->rpm_apc_corner_map = devm_kzalloc(&pdev->dev,
+		(cpr_vreg->num_corners + 1) *
+		sizeof(*cpr_vreg->rpm_apc_corner_map), GFP_KERNEL);
 	if (!cpr_vreg->rpm_apc_corner_map)
 		return -ENOMEM;
 
@@ -4807,7 +4804,7 @@ static int cpr_remap_efuse_data(struct platform_device *pdev,
 		return rc;
 	}
 
-	temp = kzalloc(array3_size(sizeof(*temp), size, 4), GFP_KERNEL);
+	temp = kzalloc(sizeof(*temp) * size * 4, GFP_KERNEL);
 	if (!temp)
 		return -ENOMEM;
 
@@ -4827,8 +4824,8 @@ static int cpr_remap_efuse_data(struct platform_device *pdev,
 		bits += temp[i * 4 + 2];
 
 	cpr_vreg->num_remapped_rows = DIV_ROUND_UP(bits, 64);
-	cpr_vreg->remapped_row = devm_kcalloc(&pdev->dev,
-		cpr_vreg->num_remapped_rows, sizeof(*cpr_vreg->remapped_row),
+	cpr_vreg->remapped_row = devm_kzalloc(&pdev->dev,
+		sizeof(*cpr_vreg->remapped_row) * cpr_vreg->num_remapped_rows,
 		GFP_KERNEL);
 	if (!cpr_vreg->remapped_row) {
 		rc = -ENOMEM;
@@ -5007,18 +5004,18 @@ static int cpr_fuse_corner_array_alloc(struct device *dev,
 	 */
 	len = cpr_vreg->num_fuse_corners + 1;
 
-	cpr_vreg->pvs_corner_v = devm_kcalloc(dev,
-			len, sizeof(*cpr_vreg->pvs_corner_v), GFP_KERNEL);
-	cpr_vreg->cpr_fuse_target_quot = devm_kcalloc(dev,
-		len, sizeof(*cpr_vreg->cpr_fuse_target_quot), GFP_KERNEL);
-	cpr_vreg->cpr_fuse_ro_sel = devm_kcalloc(dev,
-			len, sizeof(*cpr_vreg->cpr_fuse_ro_sel), GFP_KERNEL);
-	cpr_vreg->fuse_ceiling_volt = devm_kcalloc(dev,
-		len, sizeof(*cpr_vreg->fuse_ceiling_volt), GFP_KERNEL);
-	cpr_vreg->fuse_floor_volt = devm_kcalloc(dev,
-		len, sizeof(*cpr_vreg->fuse_floor_volt), GFP_KERNEL);
-	cpr_vreg->step_quotient = devm_kcalloc(dev,
-		len, sizeof(*cpr_vreg->step_quotient), GFP_KERNEL);
+	cpr_vreg->pvs_corner_v = devm_kzalloc(dev,
+			len * sizeof(*cpr_vreg->pvs_corner_v), GFP_KERNEL);
+	cpr_vreg->cpr_fuse_target_quot = devm_kzalloc(dev,
+		len * sizeof(*cpr_vreg->cpr_fuse_target_quot), GFP_KERNEL);
+	cpr_vreg->cpr_fuse_ro_sel = devm_kzalloc(dev,
+			len * sizeof(*cpr_vreg->cpr_fuse_ro_sel), GFP_KERNEL);
+	cpr_vreg->fuse_ceiling_volt = devm_kzalloc(dev,
+		len * (sizeof(*cpr_vreg->fuse_ceiling_volt)), GFP_KERNEL);
+	cpr_vreg->fuse_floor_volt = devm_kzalloc(dev,
+		len * (sizeof(*cpr_vreg->fuse_floor_volt)), GFP_KERNEL);
+	cpr_vreg->step_quotient = devm_kzalloc(dev,
+		len * sizeof(*cpr_vreg->step_quotient), GFP_KERNEL);
 
 	if (cpr_vreg->pvs_corner_v == NULL || cpr_vreg->cpr_fuse_ro_sel == NULL
 	    || cpr_vreg->fuse_ceiling_volt == NULL
@@ -5109,8 +5106,8 @@ static int cpr_mem_acc_init(struct platform_device *pdev,
 	}
 
 	size = prop->length / sizeof(u32);
-	cpr_vreg->mem_acc_corner_map = devm_kcalloc(&pdev->dev,
-					size + 1, sizeof(int),
+	cpr_vreg->mem_acc_corner_map = devm_kzalloc(&pdev->dev,
+					sizeof(int) * (size + 1),
 					GFP_KERNEL);
 
 	rc = of_property_read_u32_array(pdev->dev.of_node, corner_map_str,
